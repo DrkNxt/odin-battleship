@@ -1,4 +1,4 @@
-# webpack-template
+# odin-battleship
 
 ## Do immediately
 

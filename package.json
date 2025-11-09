@@ -1,5 +1,5 @@
 {
-  "name": "insert-name-here",
+  "name": "odin-battleship",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DrkNxt/insert-name-here.git"
+    "url": "git+https://github.com/DrkNxt/odin-battleship.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DrkNxt/insert-name-here/issues"
+    "url": "https://github.com/DrkNxt/odin-battleship/issues"
   },
-  "homepage": "https://github.com/DrkNxt/insert-name-here#readme",
+  "homepage": "https://github.com/DrkNxt/odin-battleship#readme",
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",
