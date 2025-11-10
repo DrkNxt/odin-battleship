@@ -18,7 +18,7 @@ class Ship {
   }
 
   /**
-   * Check if ship is sunk
+   * Check if this ship has been sunk
    * @returns true if ship is sunk, otherwise false
    */
   isSunk() {

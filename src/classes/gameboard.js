@@ -20,7 +20,7 @@ class Gameboard {
    * Add a new Ship to the Gameboard
    * @param {number} length ship length
    * @param {number} x x coordinate; between 0 and 9 (inclusive)
-   * @param {number} y x coordinate; between 0 and 9 (inclusive)
+   * @param {number} y y coordinate; between 0 and 9 (inclusive)
    * @param {boolean} horizontal direction the ship is facing
    */
   addShip(length, x, y, horizontal = true) {
@@ -67,6 +67,11 @@ class Gameboard {
     this.ships.push({ ship, position, horizontal });
   }
 
+  /**
+   * Attack the coordinate specified by `x` and `y`
+   * @param {number} x x coordinate; between 0 and 9 (inclusive)
+   * @param {number} y y coordinate; between 0 and 9 (inclusive)
+   */
   receiveAttack(x, y) {
     if (this.boardMatrix[x][y].isAttacked) {
       throw new Error("Gameboard.receiveAttack(): Cannot attack same position twice");
@@ -86,6 +91,10 @@ class Gameboard {
     }
   }
 
+  /**
+   * Check if all ships on this board have been sunk
+   * @returns true if all ships are sunk, otherwise false
+   */
   allShipsSunk() {
     for (let ship of this.ships) {
       if (!ship.ship.sunk) {
