@@ -30,7 +30,83 @@ Make grid auto-fit content:
   line-height: 1.6;
   font-family: "Roboto", Arial, sans-serif;
   box-sizing: border-box;
-  --primary-color: #e1e1e1;
-  --secondary-color: #555555;
+  --background-color: #333333;
+  --board-color: #e8e8e8;
   --text-color: black;
+  --ship-color: rgb(26, 130, 185);
+  --hit-color: rgb(147, 38, 65);
+  --miss-color: rgb(130, 130, 130);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+}
+
+div.gameboards {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 700px));
+  gap: 100px;
+  padding: 20px;
+  justify-content: center;
+}
+
+div#player1,
+div#player2 {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+div.gameboard {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  background-color: var(--board-color);
+  border: 2px solid var(--text-color);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 700px;
+}
+
+div.cell {
+  border: 1px solid var(--text-color);
+  transition: background-color 0.3s ease;
+}
+
+div.cell.hit {
+  background-color: var(--hit-color);
+}
+
+div.cell.miss {
+  background-color: var(--miss-color);
+}
+
+div.cell.ship {
+  background-color: var(--ship-color);
+}
+
+div.cell:hover {
+  background-color: color-mix(in srgb, var(--board-color) 80%, black);
+  cursor: pointer;
+}
+
+div.cell.hit:hover {
+  cursor: not-allowed;
+  background-color: color-mix(in srgb, var(--hit-color) 80%, black);
+}
+
+div.cell.miss:hover {
+  cursor: not-allowed;
+  background-color: color-mix(in srgb, var(--miss-color) 80%, black);
+}
+
+div.cell.ship:hover {
+  background-color: color-mix(in srgb, var(--ship-color) 80%, black);
 }

@@ -20,30 +20,30 @@ class Gameboard {
    * Add a new Ship to the Gameboard
    * @param {number} length ship length
    * @param {Array<number>} position position coordinates between 0 and 9 (inclusive): [x, y]
-   * @param {boolean} horizontal direction the ship is facing
+   * @param {boolean} placeVertically direction the ship is facing
    */
-  addShip(length, position, horizontal = true) {
-    let pos = { x: position[0], y: position[1] };
+  addShip(length, position, placeVertically = true) {
+    const pos = { x: position[0], y: position[1] };
     // throw error if start position is outside board
     if (pos.x >= this._boardSize || pos.y >= this._boardSize || pos.x < 0 || pos.y < 0) {
       throw new Error("Gameboard.addShip(): Cannot create ship outside of board");
     }
 
     // adjust start position if ship is too long to fit on board
-    if (horizontal && pos.x + length >= this._boardSize) {
+    if (placeVertically && pos.x + length >= this._boardSize) {
       pos.x -= pos.x + length - this._boardSize;
     }
-    if (!horizontal && pos.y + length >= this._boardSize) {
+    if (!placeVertically && pos.y + length >= this._boardSize) {
       pos.y -= pos.y + length - this._boardSize;
     }
 
     // get coordinates array
     const coordinates = [];
-    if (horizontal) {
+    if (placeVertically) {
       for (let i = 0; i < length; i++) {
         coordinates.push([pos.x + i, pos.y]);
         // throw error if there is no space at this position
-        if (this.boardMatrix[pos.x + 1][pos.y].hasShip) {
+        if (this.boardMatrix[pos.x + i][pos.y].hasShip) {
           throw new Error("Gameboard.addShip(): Cannot create ship; Position is already taken");
         }
       }
@@ -51,7 +51,7 @@ class Gameboard {
       for (let i = 0; i < length; i++) {
         coordinates.push([pos.x, pos.y + i]);
         // throw error if there is no space at this position
-        if (this.boardMatrix[pos.x][pos.y + 1].hasShip) {
+        if (this.boardMatrix[pos.x][pos.y + i].hasShip) {
           throw new Error("Gameboard.addShip(): Cannot create ship; Position is already taken");
         }
       }
@@ -64,15 +64,15 @@ class Gameboard {
 
     // create ship and add to ships array
     let ship = new Ship(length);
-    this.ships.push({ ship, coordinates, horizontal });
+    this.ships.push({ ship, coordinates, horizontal: placeVertically });
   }
 
   /**
    * Attack the specified position
-   * @param {number} position position coordinates between 0 and 9 (inclusive): [x, y]
+   * @param {Array<number>} position position coordinates between 0 and 9 (inclusive): [x, y]
    */
   receiveAttack(position) {
-    pos = { x: position[0], y: position[1] };
+    const pos = { x: position[0], y: position[1] };
     if (this.boardMatrix[pos.x][pos.y].isAttacked) {
       throw new Error("Gameboard.receiveAttack(): Cannot attack same position twice");
     }
