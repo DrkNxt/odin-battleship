@@ -56,12 +56,26 @@ function comTurn() {
     players[0].gameboard.receiveAttack([move[0], move[1]]);
     domManager.updateCell([move[0], move[1]], players[0], 1);
 
+    isGameOver();
+
     // attack again if attack hit a ship
     if (players[0].gameboard.boardMatrix[move[0]][move[1]].hasShip) {
       continue;
     }
 
     nextTurn();
+  }
+}
+
+/**
+ * Check if all of the ships of one board are sunk
+ */
+function isGameOver() {
+  if (players[0].gameboard.allShipsSunk()) {
+    console.log("You lose");
+  }
+  if (players[1].gameboard.allShipsSunk()) {
+    console.log("You win!");
   }
 }
 
@@ -78,4 +92,4 @@ players[1].gameboard.addShip(3, [7, 5], false);
 domManager.generateBoard(players[0], 1);
 domManager.generateBoard(players[1], 2);
 
-export { nextTurn, getTurn };
+export { nextTurn, getTurn, isGameOver };

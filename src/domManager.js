@@ -32,6 +32,7 @@ function generateBoard(player, boardNumber) {
           // make sure clicked cell has not been clicked before
           if (player.gameboard.receiveAttack([i, j])) {
             updateCell([i, j], player, boardNumber);
+            gameManager.isGameOver();
 
             // let player attack again if attack hit a ship
             if (!player.gameboard.boardMatrix[i][j].hasShip) {
