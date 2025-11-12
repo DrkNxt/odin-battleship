@@ -48,8 +48,8 @@ function generateBoard(player, boardNumber) {
 /**
  * Update the specified `cell` as stored in `player.gameboard` on the board specified by `boardNumber`
  * @param {Array<number>} position cell coordinates between 0 and 9 (inclusive): [x, y]
- * @param {*} player
- * @param {*} boardNumber 1 or 2
+ * @param {Player} player
+ * @param {number} boardNumber 1 or 2
  */
 function updateCell(position, player, boardNumber, showShips = false) {
   if (boardNumber < 1 || boardNumber > 2) {
@@ -75,4 +75,27 @@ function updateCell(position, player, boardNumber, showShips = false) {
   }
 }
 
-export { generateBoard, updateCell };
+/**
+ * Display who's turn it is
+ * @param {number} boardNumber 1 or 2
+ */
+function displayTurn(boardNumber) {
+  if (boardNumber < 1 || boardNumber > 2) {
+    throw (
+      new Error() > `domManager.displayTurn: boardNumber has to be 1 or 2 but was ${boardNumber}`
+    );
+  }
+
+  const board1 = document.querySelector("#board1");
+  const board2 = document.querySelector("#board2");
+
+  if (boardNumber === 1) {
+    board1.classList.add("active");
+    board2.classList.remove("active");
+  } else {
+    board2.classList.add("active");
+    board1.classList.remove("active");
+  }
+}
+
+export { generateBoard, updateCell, displayTurn };

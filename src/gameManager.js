@@ -4,6 +4,7 @@ import * as domManager from "./domManager.js";
 const players = [new Player(), new Player(true)];
 let turn = 0;
 const comPossibleMoves = getPossibleMoves(players[1]);
+domManager.displayTurn(2);
 
 /**
  * Set turn to next turn
@@ -11,8 +12,10 @@ const comPossibleMoves = getPossibleMoves(players[1]);
 function nextTurn() {
   if (turn !== 0) {
     turn = 0;
+    domManager.displayTurn(2);
   } else {
     turn = 1;
+    domManager.displayTurn(1);
     comTurn();
   }
 }
@@ -44,7 +47,7 @@ function getPossibleMoves(player) {
 /**
  * Let the computer take their turn
  */
-function comTurn() {
+async function comTurn() {
   while (getTurn() !== 0) {
     // choose a possible move at random
     let move = comPossibleMoves[Math.floor(Math.random() * comPossibleMoves.length)];
@@ -52,6 +55,9 @@ function comTurn() {
       comPossibleMoves.findIndex((m) => m === move),
       1
     );
+
+    // add delay
+    await wait(400);
 
     players[0].gameboard.receiveAttack([move[0], move[1]]);
     domManager.updateCell([move[0], move[1]], players[0], 1);
@@ -65,6 +71,15 @@ function comTurn() {
 
     nextTurn();
   }
+}
+
+/**
+ * Pause function execution for `delay` milliseconds
+ * @param {number} delay
+ * @returns
+ */
+function wait(delay) {
+  return new Promise((resolve) => setTimeout(() => resolve(null), delay));
 }
 
 /**
