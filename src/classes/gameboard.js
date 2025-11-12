@@ -70,11 +70,12 @@ class Gameboard {
   /**
    * Attack the specified position
    * @param {Array<number>} position position coordinates between 0 and 9 (inclusive): [x, y]
+   * @returns true if cell was not previously attacked, otherwise false
    */
   receiveAttack(position) {
     const pos = { x: position[0], y: position[1] };
     if (this.boardMatrix[pos.x][pos.y].isAttacked) {
-      throw new Error("Gameboard.receiveAttack(): Cannot attack same position twice");
+      return false;
     }
     this.boardMatrix[pos.x][pos.y].isAttacked = true;
 
@@ -84,11 +85,12 @@ class Gameboard {
         for (let coordinate of ship.coordinates) {
           if (coordinate[0] === pos.x && coordinate[1] === pos.y) {
             ship.ship.hit();
-            return;
+            return true;
           }
         }
       }
     }
+    return true;
   }
 
   /**

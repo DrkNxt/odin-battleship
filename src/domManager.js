@@ -1,3 +1,5 @@
+import * as gameManager from "./gameManager.js";
+
 /**
  * Generate cells as stored in `player.gameboard` on the board specified by `boardNumber`
  * @param {Player} player
@@ -18,7 +20,26 @@ function generateBoard(player, boardNumber) {
       // add cell number to class
       cell.classList.add("cell", `cell${boardNumber}${i}${j}`);
       boardContainer.appendChild(cell);
-      updateCell([i, j], player, boardNumber);
+      updateCell([i, j], player, boardNumber, !player.isComputer);
+
+      // add click event to each cell
+      if (player.isComputer) {
+        cell.addEventListener("click", () => {
+          if (gameManager.getTurn() === boardNumber - 1) {
+            return;
+          }
+
+          // make sure clicked cell has not been clicked before
+          if (player.gameboard.receiveAttack([i, j])) {
+            updateCell([i, j], player, boardNumber);
+
+            // let player attack again if attack hit a ship
+            if (!player.gameboard.boardMatrix[i][j].hasShip) {
+              gameManager.nextTurn();
+            }
+          }
+        });
+      }
     }
   }
 }
@@ -29,7 +50,7 @@ function generateBoard(player, boardNumber) {
  * @param {*} player
  * @param {*} boardNumber 1 or 2
  */
-function updateCell(position, player, boardNumber) {
+function updateCell(position, player, boardNumber, showShips = false) {
   if (boardNumber < 1 || boardNumber > 2) {
     throw (
       new Error() > `domManager.updateCell: boardNumber has to be 1 or 2 but was ${boardNumber}`
@@ -48,9 +69,9 @@ function updateCell(position, player, boardNumber) {
     } else {
       cellContainer.classList.add("miss");
     }
-  } else if (cellData.hasShip) {
+  } else if (showShips && cellData.hasShip) {
     cellContainer.classList.add("ship");
   }
 }
 
-export { generateBoard };
+export { generateBoard, updateCell };

@@ -126,11 +126,9 @@ describe("Class Gameboard:", () => {
 
     test("attack same position twice", () => {
       expect(gameboard.boardMatrix[0][0].isAttacked).toBe(false);
-      gameboard.receiveAttack([0, 0]);
+      expect(gameboard.receiveAttack([0, 0])).toBe(true);
       expect(gameboard.boardMatrix[0][0].isAttacked).toBe(true);
-      expect(() => gameboard.receiveAttack([0, 0])).toThrow(
-        "Gameboard.receiveAttack(): Cannot attack same position twice"
-      );
+      expect(gameboard.receiveAttack([0, 0])).toBe(false);
     });
 
     test("hit ship", () => {
