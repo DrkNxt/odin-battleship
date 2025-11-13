@@ -14,13 +14,13 @@ function generateBoard(player, boardNumber) {
 
   // generate cells
   const boardContainer = document.querySelector(`#board${boardNumber}`);
-  for (let i = 0; i < player.gameboard._boardSize; i++) {
-    for (let j = 0; j < player.gameboard._boardSize; j++) {
+  for (let y = 0; y < player.gameboard._boardSize; y++) {
+    for (let x = 0; x < player.gameboard._boardSize; x++) {
       const cell = document.createElement("div");
       // add cell number to class
-      cell.classList.add("cell", `cell${boardNumber}${i}${j}`);
+      cell.classList.add("cell", `cell${boardNumber}${x}${y}`);
       boardContainer.appendChild(cell);
-      updateCell([i, j], player, boardNumber, !player.isComputer);
+      updateCell([x, y], player, boardNumber, !player.isComputer);
 
       // add click event to each cell
       if (player.isComputer) {
@@ -30,12 +30,12 @@ function generateBoard(player, boardNumber) {
           }
 
           // make sure clicked cell has not been clicked before
-          if (player.gameboard.receiveAttack([i, j])) {
-            updateCell([i, j], player, boardNumber);
+          if (player.gameboard.receiveAttack([x, y])) {
+            updateCell([x, y], player, boardNumber);
             gameManager.isGameOver();
 
             // let player attack again if attack hit a ship
-            if (!player.gameboard.boardMatrix[i][j].hasShip) {
+            if (!player.gameboard.boardMatrix[x][y].hasShip) {
               gameManager.nextTurn();
             }
           }

@@ -1,9 +1,9 @@
 import { Player } from "./classes/player.js";
 import * as domManager from "./domManager.js";
+import * as comAI from "./comAI.js";
 
 const players = [new Player(), new Player(true)];
 let turn = 0;
-const comPossibleMoves = getPossibleMoves(players[1]);
 domManager.displayTurn(2);
 
 /**
@@ -16,7 +16,7 @@ function nextTurn() {
   } else {
     turn = 1;
     domManager.displayTurn(1);
-    comTurn();
+    comAI.turn(players[0]);
   }
 }
 
@@ -26,60 +26,6 @@ function nextTurn() {
  */
 function getTurn() {
   return turn;
-}
-
-/**
- * Get an Array of all possible moves
- * @param {Player} player
- */
-function getPossibleMoves(player) {
-  const moves = [];
-  for (let i = 0; i < player.gameboard._boardSize; i++) {
-    for (let j = 0; j < player.gameboard._boardSize; j++) {
-      if (!player.gameboard.boardMatrix[i][j].isAttacked) {
-        moves.push([i, j]);
-      }
-    }
-  }
-  return moves;
-}
-
-/**
- * Let the computer take their turn
- */
-async function comTurn() {
-  while (getTurn() !== 0) {
-    // choose a possible move at random
-    let move = comPossibleMoves[Math.floor(Math.random() * comPossibleMoves.length)];
-    comPossibleMoves.splice(
-      comPossibleMoves.findIndex((m) => m === move),
-      1
-    );
-
-    // add delay
-    await wait(400);
-
-    players[0].gameboard.receiveAttack([move[0], move[1]]);
-    domManager.updateCell([move[0], move[1]], players[0], 1);
-
-    isGameOver();
-
-    // attack again if attack hit a ship
-    if (players[0].gameboard.boardMatrix[move[0]][move[1]].hasShip) {
-      continue;
-    }
-
-    nextTurn();
-  }
-}
-
-/**
- * Pause function execution for `delay` milliseconds
- * @param {number} delay
- * @returns
- */
-function wait(delay) {
-  return new Promise((resolve) => setTimeout(() => resolve(null), delay));
 }
 
 /**

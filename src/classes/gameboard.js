@@ -20,9 +20,9 @@ class Gameboard {
    * Add a new Ship to the Gameboard
    * @param {number} length ship length
    * @param {Array<number>} position position coordinates between 0 and 9 (inclusive): [x, y]
-   * @param {boolean} placeVertically direction the ship is facing
+   * @param {boolean} placeHorizontally direction the ship is facing
    */
-  addShip(length, position, placeVertically = true) {
+  addShip(length, position, placeHorizontally = true) {
     const pos = { x: position[0], y: position[1] };
     // throw error if start position is outside board
     if (pos.x >= this._boardSize || pos.y >= this._boardSize || pos.x < 0 || pos.y < 0) {
@@ -30,16 +30,16 @@ class Gameboard {
     }
 
     // adjust start position if ship is too long to fit on board
-    if (placeVertically && pos.x + length >= this._boardSize) {
+    if (placeHorizontally && pos.x + length >= this._boardSize) {
       pos.x -= pos.x + length - this._boardSize;
     }
-    if (!placeVertically && pos.y + length >= this._boardSize) {
+    if (!placeHorizontally && pos.y + length >= this._boardSize) {
       pos.y -= pos.y + length - this._boardSize;
     }
 
     // get coordinates array
     const coordinates = [];
-    if (placeVertically) {
+    if (placeHorizontally) {
       for (let i = 0; i < length; i++) {
         coordinates.push([pos.x + i, pos.y]);
         // throw error if there is no space at this position
@@ -64,7 +64,7 @@ class Gameboard {
 
     // create ship and add to ships array
     let ship = new Ship(length);
-    this.ships.push({ ship, coordinates, horizontal: placeVertically });
+    this.ships.push({ ship, coordinates, horizontal: placeHorizontally });
   }
 
   /**
