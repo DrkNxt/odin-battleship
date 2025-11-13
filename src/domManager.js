@@ -74,7 +74,7 @@ function generateBoard(player, boardNumber) {
     for (let x = 0; x < player.gameboard._boardSize; x++) {
       const cell = getElement("div", ["cell", `cell${boardNumber}${x}${y}`]);
       boardContainer.appendChild(cell);
-      updateCell([x, y], player, boardNumber, !player.isComputer);
+      updateCell([x, y], player, boardNumber, true);
 
       // add click event to each cell
       if (player.isComputer) {

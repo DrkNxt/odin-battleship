@@ -41,19 +41,19 @@ class Gameboard {
     const coordinates = [];
     if (placeHorizontally) {
       for (let i = 0; i < length; i++) {
-        coordinates.push([pos.x + i, pos.y]);
         // throw error if there is no space at this position
-        if (this.boardMatrix[pos.x + i][pos.y].hasShip) {
-          throw new Error("Gameboard.addShip(): Cannot create ship; Position is already taken");
-        }
+        this.hasEnoughSpace(pos.x + i, pos.y);
+      }
+      for (let i = 0; i < length; i++) {
+        coordinates.push([pos.x + i, pos.y]);
       }
     } else {
       for (let i = 0; i < length; i++) {
-        coordinates.push([pos.x, pos.y + i]);
         // throw error if there is no space at this position
-        if (this.boardMatrix[pos.x][pos.y + i].hasShip) {
-          throw new Error("Gameboard.addShip(): Cannot create ship; Position is already taken");
-        }
+        this.hasEnoughSpace(pos.x, pos.y + i);
+      }
+      for (let i = 0; i < length; i++) {
+        coordinates.push([pos.x, pos.y + i]);
       }
     }
 
@@ -65,6 +65,67 @@ class Gameboard {
     // create ship and add to ships array
     let ship = new Ship(length);
     this.ships.push({ ship, coordinates, horizontal: placeHorizontally });
+  }
+
+  /**
+   * Test if there is enough space to place ship
+   * @param {number} x
+   * @param {number} y
+   */
+  hasEnoughSpace(x, y) {
+    if (this.boardMatrix[x][y].hasShip) {
+      throw new Error("Gameboard.addShip(): Cannot create ship; Position is already taken");
+    }
+    if (x + 1 < this._boardSize && this.boardMatrix[x + 1][y].hasShip) {
+      throw new Error("Gameboard.addShip(): Cannot create ship; Right position is already taken");
+    }
+    if (x - 1 >= 0 && this.boardMatrix[x - 1][y].hasShip) {
+      throw new Error("Gameboard.addShip(): Cannot create ship; Left position is already taken");
+    }
+    if (y + 1 < this._boardSize && this.boardMatrix[x][y + 1].hasShip) {
+      throw new Error("Gameboard.addShip(): Cannot create ship; Top position is already taken");
+    }
+    if (y - 1 >= 0 && this.boardMatrix[x][y - 1].hasShip) {
+      throw new Error("Gameboard.addShip(): Cannot create ship; Bottom position is already taken");
+    }
+    if (
+      x + 1 < this._boardSize &&
+      y + 1 < this._boardSize &&
+      this.boardMatrix[x + 1][y + 1].hasShip
+    ) {
+      throw new Error(
+        "Gameboard.addShip(): Cannot create ship; Top right position is already taken"
+      );
+    }
+    if (x + 1 < this._boardSize && y - 1 >= 0 && this.boardMatrix[x + 1][y - 1].hasShip) {
+      throw new Error(
+        "Gameboard.addShip(): Cannot create ship; Bottom right position is already taken"
+      );
+    }
+    if (x - 1 >= 0 && y + 1 < this._boardSize && this.boardMatrix[x - 1][y + 1].hasShip) {
+      throw new Error(
+        "Gameboard.addShip(): Cannot create ship; Top left position is already taken"
+      );
+    }
+    if (x - 1 >= 0 && y - 1 >= 0 && this.boardMatrix[x - 1][y - 1].hasShip) {
+      throw new Error(
+        "Gameboard.addShip(): Cannot create ship; Bottom left position is already taken"
+      );
+    }
+    return true;
+  }
+
+  /**
+   * Reset the boardMatrix to it's starting state
+   */
+  resetBoardMatrix() {
+    this.boardMatrix.splice(0);
+    for (let i = 0; i < this._boardSize; i++) {
+      this.boardMatrix[i] = [];
+      for (let j = 0; j < this._boardSize; j++) {
+        this.boardMatrix[i][j] = { isAttacked: false, hasShip: false };
+      }
+    }
   }
 
   /**

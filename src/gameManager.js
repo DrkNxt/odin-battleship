@@ -23,18 +23,83 @@ function startGame() {
   domManager.displayGame();
   domManager.displayTurn(2);
 
-  players[0].gameboard.addShip(4, [1, 1]);
-  players[0].gameboard.addShip(3, [4, 3], false);
-  players[0].gameboard.addShip(3, [6, 2]);
-  players[0].gameboard.addShip(3, [7, 5]);
-
-  players[1].gameboard.addShip(4, [9, 3]);
-  players[1].gameboard.addShip(3, [3, 4]);
-  players[1].gameboard.addShip(3, [5, 6], false);
-  players[1].gameboard.addShip(3, [7, 5], false);
+  randomizeBoard(players[0], 4, 3, 2, 0, 1);
+  randomizeBoard(players[1], 4, 3, 2, 0, 1);
 
   domManager.generateBoard(players[0], 1);
   domManager.generateBoard(players[1], 2);
+}
+
+/**
+ * Randomize board with ships of specified lengths
+ * @param {Player} player The player whose board to randomize
+ * @param {number} length2 Number of ships with length 2
+ * @param {number} length3 Number of ships with length 3
+ * @param {number} length4 Number of ships with length 4
+ * @param {number} length5 Number of ships with length 5
+ * @param {number} length6 Number of ships with length 6
+ */
+function randomizeBoard(
+  player,
+  length2 = 0,
+  length3 = 0,
+  length4 = 0,
+  length5 = 0,
+  length6 = 0,
+  maxAttempts = 10
+) {
+  const shipCounts = [
+    { length: 6, count: length6 },
+    { length: 5, count: length5 },
+    { length: 4, count: length4 },
+    { length: 3, count: length3 },
+    { length: 2, count: length2 },
+  ];
+
+  player.gameboard.resetBoardMatrix();
+
+  let placed = false;
+
+  for (const { length, count } of shipCounts) {
+    for (let i = 0; i < count; i++) {
+      let attempts = 0;
+      const maxShipAttempts = 100;
+      placed = false;
+
+      while (!placed && attempts < maxShipAttempts) {
+        attempts++;
+
+        // random position (0-9)
+        const x = Math.floor(Math.random() * player.gameboard._boardSize);
+        const y = Math.floor(Math.random() * player.gameboard._boardSize);
+
+        // random orientation (true = horizontal, false = vertical)
+        const placeHorizontally = Math.random() < 0.5;
+
+        try {
+          player.gameboard.addShip(length, [x, y], placeHorizontally);
+          placed = true;
+        } catch (error) {
+          // position was invalid or already taken, try again
+        }
+      }
+
+      if (!placed) {
+        break;
+      }
+    }
+    if (!placed) {
+      break;
+    }
+  }
+
+  if (!placed) {
+    if (maxAttempts <= 1) {
+      console.warn("Could not find valid board");
+      return;
+    }
+    randomizeBoard(player, length2, length3, length4, length5, length6, maxAttempts - 1);
+  }
 }
 
 /**
