@@ -50,7 +50,6 @@ async function turn(player) {
         1
       );
     }
-    console.log(move);
 
     // add delay
     await wait(400);
@@ -94,8 +93,6 @@ async function turn(player) {
             break;
           }
         }
-        console.log("Row detected");
-        console.log(JSON.stringify(preferredMoves));
         continue;
       }
 
@@ -128,14 +125,10 @@ async function turn(player) {
             break;
           }
         }
-        console.log("Column detected");
-        console.log(JSON.stringify(preferredMoves));
         continue;
       }
 
       if (chosePreferred && preferredMoves.length < 1) {
-        console.log("End of ship detected");
-        console.log(JSON.stringify(preferredMoves));
         continue;
       }
 
@@ -165,8 +158,6 @@ async function turn(player) {
       if (move[0] - 1 >= 0 && !player.gameboard.boardMatrix[move[0] - 1][move[1]].isAttacked) {
         preferredMoves.push([move[0] - 1, move[1]]);
       }
-
-      console.log(JSON.stringify(preferredMoves));
       continue;
     }
 

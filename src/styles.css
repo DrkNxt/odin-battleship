@@ -43,12 +43,69 @@ body {
   padding: 0;
   background-color: var(--background-color);
   color: var(--text-color);
+}
+
+dialog {
+  border: none;
+  border-radius: 5px;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  box-shadow: 4px 4px 20px 0 var(--background-color);
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+}
+
+dialog:open {
+  padding: 20px;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+  margin: 0;
+  grid-column: span 2;
+  text-align: center;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+}
+
+button.positive {
+  background-color: var(--miss-color);
+}
+
+button.positive:hover {
+  background-color: color-mix(in srgb, var(--miss-color) 80%, black);
+}
+
+button.negative {
+  background-color: var(--hit-color);
+}
+
+button.negative:hover {
+  background-color: color-mix(in srgb, var(--hit-color) 80%, black);
+}
+
+main {
   display: flex;
   justify-content: center;
   width: 100vw;
 }
 
-div.gameboards {
+div.game {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(auto-fit, minmax(300px, 700px));

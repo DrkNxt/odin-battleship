@@ -1,6 +1,62 @@
 import * as gameManager from "./gameManager.js";
 
 /**
+ * Load the main game HTML
+ */
+function displayGame() {
+  const main = document.querySelector("main");
+  main.innerHTML = "";
+  const gameContainer = getElement("div", ["game"]);
+  const player1 = getElement("div", null, "player1");
+  const player2 = getElement("div", null, "player2");
+
+  player1.appendChild(getElement("h1", null, null, "Your board"));
+  player2.appendChild(getElement("h1", null, null, "Enemy board"));
+  player1.appendChild(getElement("div", ["gameboard"], "board1"));
+  player2.appendChild(getElement("div", ["gameboard"], "board2"));
+  gameContainer.appendChild(player1);
+  gameContainer.appendChild(player2);
+  main.appendChild(gameContainer);
+}
+
+/**
+ * Display a new dialog with two options
+ * @param {String} text
+ * @param {Function} positiveAction
+ * @param {String} positiveMessage
+ * @param {Function} negativeAction
+ * @param {String} negativeMessage
+ */
+function displayDialog(text, positiveAction, positiveMessage, negativeAction, negativeMessage) {
+  const dialog = document.querySelector("dialog");
+  dialog.innerHTML = "";
+
+  // prevent closing with Esc key
+  dialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+  });
+
+  const positiveButton = getElement("button", ["positive"], null, positiveMessage);
+  positiveButton.addEventListener("click", () => {
+    dialog.innerHTML = "";
+    dialog.close();
+    positiveAction();
+  });
+
+  const negativeButton = getElement("button", ["negative"], null, negativeMessage);
+  negativeButton.addEventListener("click", () => {
+    dialog.innerHTML = "";
+    dialog.close();
+    negativeAction();
+  });
+
+  dialog.appendChild(getElement("h2", null, null, text));
+  dialog.appendChild(positiveButton);
+  dialog.appendChild(negativeButton);
+  dialog.showModal();
+}
+
+/**
  * Generate cells as stored in `player.gameboard` on the board specified by `boardNumber`
  * @param {Player} player
  * @param {number} boardNumber 1 or 2
@@ -16,9 +72,7 @@ function generateBoard(player, boardNumber) {
   const boardContainer = document.querySelector(`#board${boardNumber}`);
   for (let y = 0; y < player.gameboard._boardSize; y++) {
     for (let x = 0; x < player.gameboard._boardSize; x++) {
-      const cell = document.createElement("div");
-      // add cell number to class
-      cell.classList.add("cell", `cell${boardNumber}${x}${y}`);
+      const cell = getElement("div", ["cell", `cell${boardNumber}${x}${y}`]);
       boardContainer.appendChild(cell);
       updateCell([x, y], player, boardNumber, !player.isComputer);
 
@@ -98,4 +152,25 @@ function displayTurn(boardNumber) {
   }
 }
 
-export { generateBoard, updateCell, displayTurn };
+/**
+ * Get a new HTML element
+ * @param {K} element
+ * @param {Array<String>} classes
+ * @param {string} id
+ * @returns The created HTML element
+ */
+function getElement(element, classes = null, id = null, text = null) {
+  const newElement = document.createElement(element);
+  if (classes !== null) {
+    newElement.classList.add(...classes);
+  }
+  if (id !== null) {
+    newElement.id = id;
+  }
+  if (text !== null) {
+    newElement.textContent = text;
+  }
+  return newElement;
+}
+
+export { displayGame, displayDialog, generateBoard, updateCell, displayTurn };

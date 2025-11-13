@@ -2,9 +2,40 @@ import { Player } from "./classes/player.js";
 import * as domManager from "./domManager.js";
 import * as comAI from "./comAI.js";
 
-const players = [new Player(), new Player(true)];
-let turn = 0;
-domManager.displayTurn(2);
+const players = [];
+let turn;
+
+/**
+ * Display ship placement screen
+ */
+function prepareGame() {
+  players.splice(0);
+  players.push(new Player(), new Player(true));
+  turn = 0;
+  startGame();
+}
+
+/**
+ * Start main game loop
+ */
+function startGame() {
+  domManager.displayGame();
+  domManager.displayGame();
+  domManager.displayTurn(2);
+
+  players[0].gameboard.addShip(4, [1, 1]);
+  players[0].gameboard.addShip(3, [4, 3], false);
+  players[0].gameboard.addShip(3, [6, 2]);
+  players[0].gameboard.addShip(3, [7, 5]);
+
+  players[1].gameboard.addShip(4, [9, 3]);
+  players[1].gameboard.addShip(3, [3, 4]);
+  players[1].gameboard.addShip(3, [5, 6], false);
+  players[1].gameboard.addShip(3, [7, 5], false);
+
+  domManager.generateBoard(players[0], 1);
+  domManager.generateBoard(players[1], 2);
+}
 
 /**
  * Set turn to next turn
@@ -33,24 +64,25 @@ function getTurn() {
  */
 function isGameOver() {
   if (players[0].gameboard.allShipsSunk()) {
-    console.log("You lose");
+    domManager.displayDialog(
+      "You lose!",
+      () => console.log("positive"),
+      "Play again",
+      () => console.log("negative"),
+      "Main Menu"
+    );
   }
   if (players[1].gameboard.allShipsSunk()) {
-    console.log("You win!");
+    domManager.displayDialog(
+      "You win!",
+      () => console.log("positive"),
+      "Play again",
+      () => console.log("negative"),
+      "Main Menu"
+    );
   }
 }
 
-players[0].gameboard.addShip(4, [1, 1]);
-players[0].gameboard.addShip(3, [4, 3], false);
-players[0].gameboard.addShip(3, [6, 2]);
-players[0].gameboard.addShip(3, [7, 5]);
-
-players[1].gameboard.addShip(4, [9, 3]);
-players[1].gameboard.addShip(3, [3, 4]);
-players[1].gameboard.addShip(3, [5, 6], false);
-players[1].gameboard.addShip(3, [7, 5], false);
-
-domManager.generateBoard(players[0], 1);
-domManager.generateBoard(players[1], 2);
+prepareGame();
 
 export { nextTurn, getTurn, isGameOver };
