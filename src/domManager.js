@@ -1,6 +1,77 @@
 import * as gameManager from "./gameManager.js";
 
 /**
+ * Display main menu
+ */
+function displayMainMenu() {
+  const main = document.querySelector("main");
+  main.innerHTML = "";
+  const mainMenu = getElement("div", ["main-menu"]);
+  const buttonContainer = getElement("div", ["main-buttons"]);
+
+  const buttonSingleplayer = getElement(
+    "button",
+    ["main-button", "singleplayer"],
+    null,
+    "Singleplayer"
+  );
+  const buttonMultiplayer = getElement(
+    "button",
+    ["main-button", "multiplayer"],
+    null,
+    "Multiplayer"
+  );
+
+  buttonSingleplayer.addEventListener("click", () => {
+    gameManager.startSingleplayer();
+  });
+
+  buttonContainer.appendChild(buttonSingleplayer);
+  buttonContainer.appendChild(buttonMultiplayer);
+  mainMenu.appendChild(getElement("h1", ["main-title"], null, "Battleship"));
+  mainMenu.appendChild(buttonContainer);
+  main.appendChild(mainMenu);
+}
+
+/**
+ * Display a screen that lets you place your ships on your board
+ */
+function displayBoardSelection(boardNumber) {
+  const main = document.querySelector("main");
+  main.innerHTML = "";
+  const gameContainer = getElement("div", ["game"]);
+  const player = getElement("div", null, `player${boardNumber}`);
+  const buttonContainer = getElement("div", ["board-selection-buttons"]);
+  const shuffleButton = getElement("button", ["positive"], null, "Shuffle");
+  const startButton = getElement("button", ["green"], null, "Start");
+  const menuButton = getElement("button", ["negative"], null, "Main Menu");
+
+  startButton.addEventListener("click", () => {
+    gameManager.startGame();
+  });
+
+  shuffleButton.addEventListener("click", () => {
+    gameManager.randomizeBoard(gameManager.players[boardNumber - 1]);
+    generateBoard(gameManager.players[boardNumber - 1], boardNumber);
+  });
+
+  menuButton.addEventListener("click", () => {
+    displayMainMenu();
+  });
+
+  buttonContainer.appendChild(startButton);
+  buttonContainer.appendChild(shuffleButton);
+  buttonContainer.appendChild(menuButton);
+  player.appendChild(getElement("h1", null, null, "Place your ships!"));
+  player.appendChild(buttonContainer);
+  player.appendChild(getElement("div", ["gameboard"], `board${boardNumber}`));
+  gameContainer.appendChild(player);
+  main.appendChild(gameContainer);
+  gameManager.randomizeBoard(gameManager.players[boardNumber - 1]);
+  generateBoard(gameManager.players[boardNumber - 1], boardNumber);
+}
+
+/**
  * Load the main game HTML
  */
 function displayGame() {
@@ -70,11 +141,12 @@ function generateBoard(player, boardNumber) {
 
   // generate cells
   const boardContainer = document.querySelector(`#board${boardNumber}`);
+  boardContainer.innerHTML = "";
   for (let y = 0; y < player.gameboard._boardSize; y++) {
     for (let x = 0; x < player.gameboard._boardSize; x++) {
       const cell = getElement("div", ["cell", `cell${boardNumber}${x}${y}`]);
       boardContainer.appendChild(cell);
-      updateCell([x, y], player, boardNumber, true);
+      updateCell([x, y], player, boardNumber, !player.isComputer);
 
       // add click event to each cell
       if (player.isComputer) {
@@ -173,4 +245,12 @@ function getElement(element, classes = null, id = null, text = null) {
   return newElement;
 }
 
-export { displayGame, displayDialog, generateBoard, updateCell, displayTurn };
+export {
+  displayMainMenu,
+  displayBoardSelection,
+  displayGame,
+  displayDialog,
+  generateBoard,
+  updateCell,
+  displayTurn,
+};

@@ -36,6 +36,7 @@ Make grid auto-fit content:
   --miss-color: rgb(26, 130, 185);
   --hit-color: rgb(188, 54, 87);
   --ship-color: rgb(68, 68, 68);
+  --green-color: rgb(34, 139, 34);
 }
 
 body {
@@ -43,6 +44,7 @@ body {
   padding: 0;
   background-color: var(--background-color);
   color: var(--text-color);
+  height: 100vh;
 }
 
 dialog {
@@ -102,7 +104,83 @@ button.negative:hover {
 main {
   display: flex;
   justify-content: center;
-  width: 100vw;
+  width: 100%;
+  height: 100%;
+}
+
+div.main-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 50px;
+  margin-top: 10vh;
+}
+
+h1 {
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+h1.main-title {
+  font-size: 8rem;
+  margin: 0;
+  margin-bottom: 100px;
+  text-shadow:
+    5px 5px 10px var(--miss-color),
+    -5px -5px 10px var(--hit-color);
+}
+
+div.main-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+button.main-button {
+  font-size: 1.5rem;
+  padding: 15px 30px;
+  cursor: pointer;
+  width: 300px;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+button.singleplayer {
+  background-color: var(--miss-color);
+  box-shadow: 0 0 20px var(--miss-color);
+}
+
+button.singleplayer:hover {
+  background-color: color-mix(in srgb, var(--miss-color) 80%, black);
+}
+
+button.multiplayer {
+  background-color: var(--hit-color);
+  box-shadow: 0 0 20px var(--hit-color);
+}
+
+button.multiplayer:hover {
+  background-color: color-mix(in srgb, var(--hit-color) 80%, black);
+}
+
+div.board-selection-buttons {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+div.board-selection-buttons button {
+  width: 150px;
+  font-size: 1.2rem;
+}
+
+button.green {
+  background-color: var(--green-color);
+}
+
+button.green:hover {
+  background-color: color-mix(in srgb, var(--green-color) 80%, black);
 }
 
 div.game {

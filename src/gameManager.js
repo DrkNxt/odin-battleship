@@ -6,13 +6,13 @@ const players = [];
 let turn;
 
 /**
- * Display ship placement screen
+ * Start a new singleplayer game
  */
-function prepareGame() {
+function startSingleplayer() {
   players.splice(0);
   players.push(new Player(), new Player(true));
   turn = 0;
-  startGame();
+  domManager.displayBoardSelection(1);
 }
 
 /**
@@ -20,10 +20,8 @@ function prepareGame() {
  */
 function startGame() {
   domManager.displayGame();
-  domManager.displayGame();
   domManager.displayTurn(2);
 
-  randomizeBoard(players[0], 4, 3, 2, 0, 1);
   randomizeBoard(players[1], 4, 3, 2, 0, 1);
 
   domManager.generateBoard(players[0], 1);
@@ -41,11 +39,11 @@ function startGame() {
  */
 function randomizeBoard(
   player,
-  length2 = 0,
-  length3 = 0,
-  length4 = 0,
+  length2 = 4,
+  length3 = 3,
+  length4 = 2,
   length5 = 0,
-  length6 = 0,
+  length6 = 1,
   maxAttempts = 10
 ) {
   const shipCounts = [
@@ -131,23 +129,23 @@ function isGameOver() {
   if (players[0].gameboard.allShipsSunk()) {
     domManager.displayDialog(
       "You lose!",
-      () => console.log("positive"),
+      () => startSingleplayer(),
       "Play again",
-      () => console.log("negative"),
+      () => domManager.displayMainMenu(),
       "Main Menu"
     );
   }
   if (players[1].gameboard.allShipsSunk()) {
     domManager.displayDialog(
       "You win!",
-      () => console.log("positive"),
+      () => startSingleplayer(),
       "Play again",
-      () => console.log("negative"),
+      () => domManager.displayMainMenu(),
       "Main Menu"
     );
   }
 }
 
-prepareGame();
+domManager.displayMainMenu();
 
-export { nextTurn, getTurn, isGameOver };
+export { nextTurn, getTurn, isGameOver, startSingleplayer, startGame, randomizeBoard, players };
