@@ -4,15 +4,23 @@ import * as comAI from "./comAI.js";
 
 const players = [];
 let turn;
+let isMultiplayer = false;
 
 /**
  * Start a new singleplayer game
  */
-function startSingleplayer() {
-  players.splice(0);
-  players.push(new Player(), new Player(true));
-  turn = 0;
+function start() {
+  prepareGame();
   domManager.displayBoardSelection(1);
+}
+
+/**
+ * Prepare everything for board selection
+ */
+function prepareGame() {
+  players.splice(0);
+  players.push(new Player(), new Player(!isMultiplayer));
+  turn = 0;
 }
 
 /**
@@ -22,10 +30,12 @@ function startGame() {
   domManager.displayGame();
   domManager.displayTurn(2);
 
-  randomizeBoard(players[1], 4, 3, 2, 0, 1);
+  if (!isMultiplayer) {
+    randomizeBoard(players[1], 4, 3, 2, 0, 1);
+  }
 
   domManager.generateBoard(players[0], 1);
-  domManager.generateBoard(players[1], 2);
+  domManager.generateBoard(players[1], 2, isMultiplayer && players[1].isComputer);
 }
 
 /**
@@ -103,14 +113,30 @@ function randomizeBoard(
 /**
  * Set turn to next turn
  */
-function nextTurn() {
+async function nextTurn(isDevicePassed = false) {
+  if (isMultiplayer && !isDevicePassed) {
+    await wait(1000);
+    domManager.displayPassDevice(turn);
+    domManager.generateBoard(players[0], 1, false, true);
+    domManager.generateBoard(players[1], 2, false, true);
+    return;
+  }
   if (turn !== 0) {
     turn = 0;
+    if (isMultiplayer) {
+      domManager.generateBoard(players[0], 1);
+      domManager.generateBoard(players[1], 2, false);
+    }
     domManager.displayTurn(2);
   } else {
     turn = 1;
-    domManager.displayTurn(1);
-    comAI.turn(players[0]);
+    if (!isMultiplayer) {
+      domManager.displayTurn(1);
+      comAI.turn(players[0]);
+    } else {
+      domManager.generateBoard(players[1], 1);
+      domManager.generateBoard(players[0], 2, false);
+    }
   }
 }
 
@@ -129,7 +155,7 @@ function isGameOver() {
   if (players[0].gameboard.allShipsSunk()) {
     domManager.displayDialog(
       "You lose!",
-      () => startSingleplayer(),
+      () => start(),
       "Play again",
       () => domManager.displayMainMenu(),
       "Main Menu"
@@ -138,7 +164,7 @@ function isGameOver() {
   if (players[1].gameboard.allShipsSunk()) {
     domManager.displayDialog(
       "You win!",
-      () => startSingleplayer(),
+      () => start(),
       "Play again",
       () => domManager.displayMainMenu(),
       "Main Menu"
@@ -146,6 +172,38 @@ function isGameOver() {
   }
 }
 
+/**
+ * Set `isMultiplayer` to `bool`
+ * @param {Boolean} bool
+ */
+function setMultiplayer(bool) {
+  isMultiplayer = bool;
+}
+
+/**
+ * Pause function execution for `delay` milliseconds
+ * @param {number} delay
+ * @returns
+ */
+function wait(delay) {
+  return new Promise((resolve) => setTimeout(() => resolve(null), delay));
+}
+
 domManager.displayMainMenu();
 
-export { nextTurn, getTurn, isGameOver, startSingleplayer, startGame, randomizeBoard, players };
+export {
+  nextTurn,
+  getTurn,
+  isGameOver,
+  start,
+  startGame,
+  randomizeBoard,
+  setMultiplayer,
+  wait,
+  players,
+  isMultiplayer,
+};
+
+// TODO: Anzeige welche spieler dran ist.
+// Fixen das player swap den richtigen spieler anzeigt
+// Den Screen blocken, nachdem Spieler 2 sein Board gewählt hat

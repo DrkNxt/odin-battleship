@@ -96,7 +96,7 @@ describe("Class Gameboard:", () => {
       ]);
       expect(gameboard.ships[0].horizontal).toBe(false);
       expect(() => gameboard.addShip(2, [7, 8])).toThrow(
-        "Gameboard.addShip(): Cannot create ship; Position is already taken"
+        "Gameboard.addShip(): Cannot create ship; Right position is already taken"
       );
       expect(gameboard.ships).toHaveLength(1);
       expect(gameboard.boardMatrix[7][8].hasShip).toBe(false);

@@ -23,7 +23,13 @@ function displayMainMenu() {
   );
 
   buttonSingleplayer.addEventListener("click", () => {
-    gameManager.startSingleplayer();
+    gameManager.setMultiplayer(false);
+    gameManager.start();
+  });
+
+  buttonMultiplayer.addEventListener("click", () => {
+    gameManager.setMultiplayer(true);
+    gameManager.start();
   });
 
   buttonContainer.appendChild(buttonSingleplayer);
@@ -47,7 +53,11 @@ function displayBoardSelection(boardNumber) {
   const menuButton = getElement("button", ["negative"], null, "Main Menu");
 
   startButton.addEventListener("click", () => {
-    gameManager.startGame();
+    if (gameManager.isMultiplayer && boardNumber !== 2) {
+      displayBoardSelection(2);
+    } else {
+      gameManager.startGame();
+    }
   });
 
   shuffleButton.addEventListener("click", () => {
@@ -62,7 +72,11 @@ function displayBoardSelection(boardNumber) {
   buttonContainer.appendChild(startButton);
   buttonContainer.appendChild(shuffleButton);
   buttonContainer.appendChild(menuButton);
-  player.appendChild(getElement("h1", null, null, "Place your ships!"));
+  if (gameManager.isMultiplayer) {
+    player.appendChild(getElement("h1", null, null, `Player ${boardNumber}: Place your ships!`));
+  } else {
+    player.appendChild(getElement("h1", null, null, "Place your ships!"));
+  }
   player.appendChild(buttonContainer);
   player.appendChild(getElement("div", ["gameboard"], `board${boardNumber}`));
   gameContainer.appendChild(player);
@@ -98,7 +112,13 @@ function displayGame() {
  * @param {Function} negativeAction
  * @param {String} negativeMessage
  */
-function displayDialog(text, positiveAction, positiveMessage, negativeAction, negativeMessage) {
+function displayDialog(
+  text,
+  positiveAction,
+  positiveMessage,
+  negativeAction = null,
+  negativeMessage = null
+) {
   const dialog = document.querySelector("dialog");
   dialog.innerHTML = "";
 
@@ -107,23 +127,29 @@ function displayDialog(text, positiveAction, positiveMessage, negativeAction, ne
     event.preventDefault();
   });
 
+  const buttonContainer = getElement("div", ["button-container"]);
   const positiveButton = getElement("button", ["positive"], null, positiveMessage);
   positiveButton.addEventListener("click", () => {
     dialog.innerHTML = "";
     dialog.close();
     positiveAction();
   });
+  let negativeButton;
+  if (negativeAction !== null) {
+    negativeButton = getElement("button", ["negative"], null, negativeMessage);
+    negativeButton.addEventListener("click", () => {
+      dialog.innerHTML = "";
+      dialog.close();
+      negativeAction();
+    });
+  }
 
-  const negativeButton = getElement("button", ["negative"], null, negativeMessage);
-  negativeButton.addEventListener("click", () => {
-    dialog.innerHTML = "";
-    dialog.close();
-    negativeAction();
-  });
-
+  buttonContainer.appendChild(positiveButton);
+  if (negativeAction !== null) {
+    buttonContainer.appendChild(negativeButton);
+  }
   dialog.appendChild(getElement("h2", null, null, text));
-  dialog.appendChild(positiveButton);
-  dialog.appendChild(negativeButton);
+  dialog.appendChild(buttonContainer);
   dialog.showModal();
 }
 
@@ -131,8 +157,10 @@ function displayDialog(text, positiveAction, positiveMessage, negativeAction, ne
  * Generate cells as stored in `player.gameboard` on the board specified by `boardNumber`
  * @param {Player} player
  * @param {number} boardNumber 1 or 2
+ * @param {Boolean} showShips if true, display ships on board
+ * @param {Boolean} isBlank if true, don't display anything on board
  */
-function generateBoard(player, boardNumber) {
+function generateBoard(player, boardNumber, showShips = !player.isComputer, isBlank = false) {
   if (boardNumber < 1 || boardNumber > 2) {
     throw (
       new Error() > `domManager.generateBoard: boardNumber has to be 1 or 2 but was ${boardNumber}`
@@ -146,12 +174,20 @@ function generateBoard(player, boardNumber) {
     for (let x = 0; x < player.gameboard._boardSize; x++) {
       const cell = getElement("div", ["cell", `cell${boardNumber}${x}${y}`]);
       boardContainer.appendChild(cell);
-      updateCell([x, y], player, boardNumber, !player.isComputer);
+
+      if (isBlank) {
+        continue;
+      }
+
+      updateCell([x, y], player, boardNumber, showShips);
 
       // add click event to each cell
-      if (player.isComputer) {
+      if (player.isComputer || gameManager.isMultiplayer) {
         cell.addEventListener("click", () => {
-          if (gameManager.getTurn() === boardNumber - 1) {
+          if (
+            (gameManager.getTurn() === boardNumber - 1 && !gameManager.isMultiplayer) ||
+            (gameManager.isMultiplayer && boardNumber === 1)
+          ) {
             return;
           }
 
@@ -224,6 +260,14 @@ function displayTurn(boardNumber) {
   }
 }
 
+function displayPassDevice(turn) {
+  displayDialog(
+    `Pass the device to the next player (Player ${turn + 1})`,
+    () => gameManager.nextTurn(true),
+    "Continue"
+  );
+}
+
 /**
  * Get a new HTML element
  * @param {K} element
@@ -253,4 +297,5 @@ export {
   generateBoard,
   updateCell,
   displayTurn,
+  displayPassDevice,
 };

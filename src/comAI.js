@@ -52,7 +52,7 @@ async function turn(player) {
     }
 
     // add delay
-    await wait(400);
+    await gameManager.wait(400);
 
     player.gameboard.receiveAttack([move[0], move[1]]);
     domManager.updateCell([move[0], move[1]], player, 1);
@@ -163,15 +163,6 @@ async function turn(player) {
 
     gameManager.nextTurn();
   }
-}
-
-/**
- * Pause function execution for `delay` milliseconds
- * @param {number} delay
- * @returns
- */
-function wait(delay) {
-  return new Promise((resolve) => setTimeout(() => resolve(null), delay));
 }
 
 export { turn };

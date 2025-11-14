@@ -54,9 +54,10 @@ dialog {
   background-color: var(--background-color);
   color: var(--text-color);
   box-shadow: 4px 4px 20px 0 var(--background-color);
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
-  grid-template-columns: 1fr 1fr;
   justify-items: center;
 }
 
@@ -74,6 +75,11 @@ h2 {
   text-align: center;
 }
 
+div.button-container {
+  display: flex;
+  gap: 20px;
+}
+
 button {
   padding: 8px 12px;
   border: none;
@@ -83,6 +89,7 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease;
   color: white;
+  width: 150px;
 }
 
 button.positive {
