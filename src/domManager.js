@@ -94,6 +94,12 @@ function displayGame() {
   const gameContainer = getElement("div", ["game"]);
   const player1 = getElement("div", null, "player1");
   const player2 = getElement("div", null, "player2");
+  const buttonContainer = getElement("div", ["button-container"]);
+  const mainButton = getElement("button", ["negative"], null, "Main Menu");
+
+  mainButton.addEventListener("click", () => {
+    displayMainMenu();
+  });
 
   player1.appendChild(getElement("h1", null, null, "Your board"));
   player2.appendChild(getElement("h1", null, null, "Enemy board"));
@@ -101,6 +107,8 @@ function displayGame() {
   player2.appendChild(getElement("div", ["gameboard"], "board2"));
   gameContainer.appendChild(player1);
   gameContainer.appendChild(player2);
+  buttonContainer.appendChild(mainButton);
+  main.appendChild(buttonContainer);
   main.appendChild(gameContainer);
 }
 
@@ -167,6 +175,13 @@ function generateBoard(player, boardNumber, showShips = !player.isComputer, isBl
     );
   }
 
+  if (gameManager.isMultiplayer && isBlank) {
+    document.querySelector(`#player${boardNumber} > h1`).textContent =
+      boardNumber === 1
+        ? `Your board ${gameManager.getTurn() === 1 ? "(Player 1)" : "(Player 2)"}`
+        : `Enemy board ${gameManager.getTurn() === 1 ? "(Player 2)" : "(Player 1)"}`;
+  }
+
   // generate cells
   const boardContainer = document.querySelector(`#board${boardNumber}`);
   boardContainer.innerHTML = "";
@@ -186,7 +201,8 @@ function generateBoard(player, boardNumber, showShips = !player.isComputer, isBl
         cell.addEventListener("click", () => {
           if (
             (gameManager.getTurn() === boardNumber - 1 && !gameManager.isMultiplayer) ||
-            (gameManager.isMultiplayer && boardNumber === 1)
+            (gameManager.isMultiplayer && boardNumber === 1) ||
+            gameManager.madeTurn
           ) {
             return;
           }
@@ -262,7 +278,7 @@ function displayTurn(boardNumber) {
 
 function displayPassDevice(turn) {
   displayDialog(
-    `Pass the device to the next player (Player ${turn + 1})`,
+    `Pass the device to Player ${turn === 1 ? 1 : 2}`,
     () => gameManager.nextTurn(true),
     "Continue"
   );

@@ -5,6 +5,7 @@ import * as comAI from "./comAI.js";
 const players = [];
 let turn;
 let isMultiplayer = false;
+let madeTurn = false;
 
 /**
  * Start a new singleplayer game
@@ -20,7 +21,7 @@ function start() {
 function prepareGame() {
   players.splice(0);
   players.push(new Player(), new Player(!isMultiplayer));
-  turn = 0;
+  turn = Math.floor(Math.random() * 2);
 }
 
 /**
@@ -28,14 +29,23 @@ function prepareGame() {
  */
 function startGame() {
   domManager.displayGame();
-  domManager.displayTurn(2);
+  domManager.displayTurn(turn === 1 ? 1 : 2);
 
   if (!isMultiplayer) {
     randomizeBoard(players[1], 4, 3, 2, 0, 1);
   }
 
-  domManager.generateBoard(players[0], 1);
-  domManager.generateBoard(players[1], 2, isMultiplayer && players[1].isComputer);
+  domManager.generateBoard(players[0], 1, true, isMultiplayer);
+  domManager.generateBoard(players[1], 2, isMultiplayer && players[1].isComputer, isMultiplayer);
+
+  if (turn === 1 && !isMultiplayer) {
+    comAI.turn(players[1]);
+  }
+
+  if (isMultiplayer) {
+    domManager.displayTurn(2);
+    domManager.displayPassDevice(turn);
+  }
 }
 
 /**
@@ -115,8 +125,10 @@ function randomizeBoard(
  */
 async function nextTurn(isDevicePassed = false) {
   if (isMultiplayer && !isDevicePassed) {
+    madeTurn = true;
     await wait(1000);
     domManager.displayPassDevice(turn);
+    madeTurn = false;
     domManager.generateBoard(players[0], 1, false, true);
     domManager.generateBoard(players[1], 2, false, true);
     return;
@@ -202,8 +214,5 @@ export {
   wait,
   players,
   isMultiplayer,
+  madeTurn,
 };
-
-// TODO: Anzeige welche spieler dran ist.
-// Fixen das player swap den richtigen spieler anzeigt
-// Den Screen blocken, nachdem Spieler 2 sein Board gewählt hat
